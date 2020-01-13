@@ -1,4 +1,5 @@
-# pharo-vm-embedded-example
+# Pharo VM Example: Showing how to embed an image.
+
 This repository have an example of how to create a PharoVM with an embedded image.
 
 In this example we create an application based on the SDL2AthensDrawingExample.
