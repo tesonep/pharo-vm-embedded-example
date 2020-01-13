@@ -31,7 +31,7 @@ int main(int argc, char *argv[], const char *env[]){
 	 * that I want to send to the image.
 	 */
 	VMParameters parameters = {};
-	parameters.processArgc = 6;
+	parameters.processArgc = 4;
 	parameters.processArgv = (const char**)args;
 	parameters.environmentVector = env;
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[], const char *env[]){
 	* In this case to handle the logic of the '--logLevel' parameter we have to call this function
 	* To give the VM the opportunity of parsing the log parameter
 	*/
-	vm_parameters_parse(6, (const char**)args, &parameters);
+	vm_parameters_parse(4, (const char**)args, &parameters);
 
 	/*
 	 * I force the vm to start in a non interactive Session.

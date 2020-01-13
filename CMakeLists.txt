@@ -36,16 +36,20 @@ configure_file(src/resources.rc.in
 	${CMAKE_CURRENT_BINARY_DIR}/build/src/resources.rc)
 
 
+# transform the path into a windows path with unix backslashes C:/bla/blu
+# this is the path required to send as argument to libraries outside of the control of cygwin (like pharo itself)
+execute_process(
+	COMMAND cygpath ${CMAKE_CURRENT_SOURCE_DIR} --mixed
+	OUTPUT_VARIABLE CMAKE_CURRENT_SOURCE_DIR_TO_OUT
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 #
 # This section is to generate the image. 
 # We will have a serie of targets to download the image, download a vm and to load the code.
 #
 
-# Creation of the directories
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/build/vm)
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/build/resources)
-make_directory(${CMAKE_CURRENT_BINARY_DIR}/build/include)
-make_directory(${CMAKE_CURRENT_BINARY_DIR}/build/lib)
 
 # Adding a task to download the vm
 add_custom_command(
@@ -64,12 +68,41 @@ add_custom_command(
 # Loading the code
 add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build/resources/codeLoaded.txt
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo Pharo.image eval 1+1 && touch codeLoaded.txt 
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo Pharo.image --save --quit ${CMAKE_CURRENT_SOURCE_DIR_TO_OUT}/scripts/installSmalltalkCode.st ${CMAKE_CURRENT_SOURCE_DIR_TO_OUT}
+	COMMAND touch codeLoaded.txt 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build/resources
 	DEPENDS 
 		${CMAKE_CURRENT_BINARY_DIR}/build/resources/Pharo.image
 		${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo
 	COMMENT "Load Code")
+
+#
+# This section download the header files and to extract the libs from the VM. 
+#
+add_custom_command(
+	OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm/pharo.h
+	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/win/include/latest.zip
+	COMMAND unzip latest.zip
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build
+	COMMENT "Downloading Pharo 80 VM Headers")
+
+#
+# This section download the header files and to extract the libs from the VM. 
+#
+add_custom_command(
+	OUTPUT  
+		${CMAKE_CURRENT_BINARY_DIR}/build/lib/libPharoVMCore.a
+    	${CMAKE_CURRENT_BINARY_DIR}/build/output/PharoVMCore.dll		
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/build/lib
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/build/output
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo-vm/*.dll ${CMAKE_CURRENT_BINARY_DIR}/build/lib
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo-vm/*.dll ${CMAKE_CURRENT_BINARY_DIR}/build/output
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo-vm/*.a ${CMAKE_CURRENT_BINARY_DIR}/build/lib	
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build
+	DEPENDS 
+		${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo
+		${CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm/pharo.h
+	COMMENT "Extracting Libs")
 
 #Setting the include directories
 # - The includes in this project
@@ -79,14 +112,19 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/build/include/)
 
 # This are the files to compile in our small project.
+set(CLIENT_DEPS
+    ${CMAKE_CURRENT_BINARY_DIR}/build/lib/libPharoVMCore.a
+    ${CMAKE_CURRENT_BINARY_DIR}/build/output/PharoVMCore.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/build/resources/codeLoaded.txt
+)
+
 set(CLIENT_SOURCES
 	src/embeddedImage.c
 	${CMAKE_CURRENT_BINARY_DIR}/build/src/resources.rc
-	src/main.c
-	${CMAKE_CURRENT_BINARY_DIR}/build/resources/codeLoaded.txt)
+	src/main.c)
 
 # We declare the executable.
-add_executable(EmbeddedPharo WIN32 ${CLIENT_SOURCES})
+add_executable(EmbeddedPharo WIN32 ${CLIENT_DEPS} ${CLIENT_SOURCES})
 
 # We link the executable with the VM library.
 target_link_directories(EmbeddedPharo PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/build/lib/)
