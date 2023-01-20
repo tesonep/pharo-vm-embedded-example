@@ -54,16 +54,16 @@ make_directory(${CMAKE_CURRENT_BINARY_DIR}/build/resources)
 # Adding a task to download the vm
 add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build/vm/pharo
-	COMMAND wget -O - https://get.pharo.org/64/vmHeadlessLatest80 | bash
+	COMMAND wget -O - https://get.pharo.org/64/vm110 | bash
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build/vm
-	COMMENT "Downloading Pharo 80 VM (headless)")
+	COMMENT "Downloading Pharo 110 VM (headless)")
 
 # Adding a task to download the image
 add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build/resources/Pharo.image
-	COMMAND wget -O - https://get.pharo.org/64/80 | bash
+	COMMAND wget -O - https://get.pharo.org/64/110 | bash
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build/resources
-	COMMENT "Downloading Pharo 80 Image")
+	COMMENT "Downloading Pharo 110 Image")
 
 # Loading the code
 add_custom_command(
@@ -81,10 +81,10 @@ add_custom_command(
 #
 add_custom_command(
 	OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm/pharo.h
-	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/win/include/latest.zip
-	COMMAND unzip latest.zip
+	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/Windows-x86_64/include/latest10.zip
+	COMMAND unzip latest10.zip
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build
-	COMMENT "Downloading Pharo 80 VM Headers")
+	COMMENT "Downloading Pharo 110 VM Headers")
 
 #
 # This section download the header files and to extract the libs from the VM. 
@@ -109,7 +109,9 @@ add_custom_command(
 # - The includes from the VM code
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_BINARY_DIR}/build/include/)
+	${CMAKE_CURRENT_BINARY_DIR}/build/include/
+	${CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm)
+
 
 # This are the files to compile in our small project.
 set(CLIENT_DEPS
