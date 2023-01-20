@@ -13,6 +13,8 @@ EmbeddedSupportCommandLineHandler class >> commandName [
 { #category : #activation }
 EmbeddedSupportCommandLineHandler >> activate [
 
-	Stdio stdout << 'lala'; cr; flush. 
+	OSWindowDriver current startUp: true.
+
 	SDL2AthensDrawingExample new open.
+	
 ]

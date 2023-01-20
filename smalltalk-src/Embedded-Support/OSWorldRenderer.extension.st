@@ -20,6 +20,10 @@ OSWorldRenderer >> doActivate [
 	driver := self pickMostSuitableWindowDriver.
 	attributes preferableDriver: driver.
 	osWindow := OSWindow createWithAttributes: attributes eventHandler: (OSWindowMorphicEventHandler for: world).
+
+	driver afterMainPharoWindowCreated: osWindow.
+	driver afterSetWindowTitle: Smalltalk image imageFile fullName onWindow: osWindow.	
+	driver startUp: true.
 	
 	osWindow focus. 
 	
