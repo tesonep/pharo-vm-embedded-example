@@ -3,6 +3,8 @@
 #include "pharovm/pharoClient.h"
 #include "pharovm/imageAccess.h"
 
+VMErrorCode	vm_parameters_init(VMParameters* parameters);
+
 /**
  * In this example we are going to create a VM and run it with an embedded image.
  * We are going to send a set of parameters that we have "hardcoded", so we can control
@@ -20,7 +22,7 @@
 /*
  * The set of arguments to pass to the image.
  */
-char* args[] = {"","Pharo.image", "embeddedExample", "--embedded"};
+char* args[] = {"","--headless","Pharo.image", "embeddedExample", "--embedded"};
 
 extern FileAccessHandler embeddedFileAccess;
 
@@ -31,6 +33,8 @@ int main(int argc, char *argv[], const char *env[]){
 	 * that I want to send to the image.
 	 */
 	VMParameters parameters = {};
+	vm_parameters_init(&parameters);
+	
 	parameters.processArgc = 4;
 	parameters.processArgv = (const char**)args;
 	parameters.environmentVector = env;
@@ -54,7 +58,7 @@ int main(int argc, char *argv[], const char *env[]){
 	* In this case to handle the logic of the '--logLevel' parameter we have to call this function
 	* To give the VM the opportunity of parsing the log parameter
 	*/
-	vm_parameters_parse(4, (const char**)args, &parameters);
+	vm_parameters_parse(5, (const char**)args, &parameters);
 
 	/*
 	 * I force the vm to start in a non interactive Session.

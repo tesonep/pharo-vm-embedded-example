@@ -26,7 +26,7 @@ EXPORT(sqInt) embeddedImageFileClose(void* f){
 	return 0;
 }
 
-EXPORT(sqImageFile) embeddedImageFileOpen(char* fileName, char *mode){
+EXPORT(sqImageFile) embeddedImageFileOpen(const char* fileName, char *mode){
 	HGLOBAL res_handle = NULL;
 	HRSRC res;
 	void * res_data;
@@ -90,12 +90,14 @@ EXPORT(size_t) embeddedImageFileRead(void * ptr, size_t sz, size_t count, sqImag
 	return toRead;
 }
 
-EXPORT(int) embeddedImageFileSeek(sqImageFile fileHandler, unsigned long long pos){
+EXPORT(int) embeddedImageFileSeek(sqImageFile fileHandler, long int pos){
 	((EmbeddedImage*)fileHandler)->pos = pos;
+	return 0;
 }
 
-EXPORT(int) embeddedImageFileSeekEnd(sqImageFile fileHandler, unsigned long long offset){
+EXPORT(int) embeddedImageFileSeekEnd(sqImageFile fileHandler, long int offset){
 	((EmbeddedImage*)fileHandler)->pos = offset + ((EmbeddedImage*)fileHandler)->size;
+	return 0;
 }
 
 EXPORT(size_t) embeddedImageFileWrite(void* ptr, size_t sz, size_t count, sqImageFile fileHandler){
@@ -103,7 +105,7 @@ EXPORT(size_t) embeddedImageFileWrite(void* ptr, size_t sz, size_t count, sqImag
 	return 0;
 }
 
-EXPORT(int) embeddedImageFileExists(const char** aPath){
+EXPORT(int) embeddedImageFileExists(const char* aPath){
 	//It always exists!
 	return 1;
 }
