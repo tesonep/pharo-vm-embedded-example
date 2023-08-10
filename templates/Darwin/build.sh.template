@@ -1,0 +1,60 @@
+#!/bin/bash
+
+set -x 
+set -e
+
+IMAGE_DIR={ImageDir}
+IMAGE_NAME={ImageName}
+CHANGES_NAME={ChangesName}
+APP_NAME={AppName}
+APP_BUNDLE=$APP_NAME.app
+DMG_NAME=$APP_NAME-Installer.dmg
+
+# To create the DMG we need the create-dmg tool, you can get it from brew
+# brew install create-dmg
+
+#Clean Up previous build
+rm -f -R dmg
+mkdir -p dmg
+rm -f $DMG_NAME
+
+mkdir -p $APP_BUNDLE/Contents/Resources/
+
+cp -f $IMAGE_DIR/*.sources $APP_BUNDLE/Contents/Resources/
+cp -f $IMAGE_DIR/$CHANGES_NAME $APP_BUNDLE/Contents/Resources/
+cp -f $IMAGE_DIR/$IMAGE_NAME $APP_BUNDLE/Contents/Resources/
+
+#Downloading Pharo VM
+if [ ! -d "./pharo-vm" ] 
+then
+	curl get.pharo.org/64/vmLatest120 | bash
+fi
+
+
+
+mkdir -p $APP_BUNDLE/Contents/MacOS
+cp -Rf pharo-vm/Pharo.app/Contents/MacOS/* $APP_BUNDLE/Contents/MacOS/
+
+#codesign -dv -r- $APP_BUNDLE
+
+#Ad Hoc Signing.
+codesign --force --deep -s - $APP_BUNDLE
+
+#Creating DMG
+cp -r $APP_BUNDLE ./dmg/
+
+#Setting DPI for the background image
+sips --setProperty dpiWidth 144 --setProperty dpiHeight 144 installer-background.png
+
+create-dmg \\
+  --volname "$APP_NAME Installer" \\
+  --volicon "installer.icns" \\
+  --background "installer-background.png" \\
+  --window-pos 200 120 \\
+  --window-size 600 400 \\
+  --icon-size 100 \\
+  --icon "$APP_BUNDLE" 120 120 \\
+  --hide-extension "$APP_BUNDLE" \\
+  --app-drop-link 450 120 \\
+  "$DMG_NAME" \\
+  "dmg/"
