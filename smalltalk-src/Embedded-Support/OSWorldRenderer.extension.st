@@ -36,7 +36,5 @@ OSWorldRenderer >> doActivate [
 { #category : #'*Embedded-Support' }
 OSWorldRenderer >> windowTitle [
 
-	^ EmbeddedSupport isEmbedded
-		ifTrue: [ 'Embedded image in working directory: ' , FileLocator workingDirectory fullName ]
-		ifFalse: [ Smalltalk image imageFile fullName ]
+	^ EmbeddedSupport windowTitle
 ]

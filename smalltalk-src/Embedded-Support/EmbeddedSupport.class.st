@@ -2,7 +2,8 @@ Class {
 	#name : #EmbeddedSupport,
 	#superclass : #Object,
 	#classVars : [
-		'ErrorHandler'
+		'ErrorHandler',
+		'WindowTitle'
 	],
 	#category : #'Embedded-Support'
 }
@@ -32,4 +33,12 @@ EmbeddedSupport class >> unhandledErrorDefaultAction: anException [
 	self isEmbedded ifFalse: [ ^ false ].
 	
 	^ self errorHandler unhandledError: anException.
+]
+
+{ #category : #initialization }
+EmbeddedSupport class >> windowTitle [
+
+	^ self isEmbedded
+		ifTrue: [ WindowTitle ifNil: [ 'Embedded image in working directory: ' , FileLocator workingDirectory fullName ] ]
+		ifFalse: [ Smalltalk image imageFile fullName ]
 ]

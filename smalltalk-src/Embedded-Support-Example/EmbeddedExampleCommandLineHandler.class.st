@@ -1,17 +1,17 @@
 Class {
-	#name : #EmbeddedSupportCommandLineHandler,
+	#name : #EmbeddedExampleCommandLineHandler,
 	#superclass : #CommandLineHandler,
-	#category : #'Embedded-Support'
+	#category : #'Embedded-Support-Example'
 }
 
 { #category : #accessing }
-EmbeddedSupportCommandLineHandler class >> commandName [
+EmbeddedExampleCommandLineHandler class >> commandName [
 
 	^ 'embeddedExample'
 ]
 
 { #category : #activation }
-EmbeddedSupportCommandLineHandler >> activate [
+EmbeddedExampleCommandLineHandler >> activate [
 
 	OSWindowDriver current startUp: true.
 
