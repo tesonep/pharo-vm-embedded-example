@@ -88,3 +88,9 @@ EmbeddedSupportOSXGenerator >> iconSetFile [
 	
 	^ properties at: #IconSetFile 
 ]
+
+{ #category : #accessing }
+EmbeddedSupportOSXGenerator >> platformName [
+
+	^ 'Darwin'
+]

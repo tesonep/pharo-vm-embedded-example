@@ -57,5 +57,5 @@ EmbeddedSupportGenerator >> properties: aCollection [
 { #category : #accessing }
 EmbeddedSupportGenerator >> templateDirectory [
 	
-	^ (IceRepository repositoryNamed: 'pharo-vm-embedded-example') location / 'templates' / 'Darwin'
+	^ (IceRepository repositoryNamed: 'pharo-vm-embedded-example') location / 'templates' / self platformName
 ]
