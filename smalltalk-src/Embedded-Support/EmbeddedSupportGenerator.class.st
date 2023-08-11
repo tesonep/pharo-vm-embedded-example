@@ -5,7 +5,7 @@ Class {
 		'properties',
 		'outputDirectory'
 	],
-	#category : #'Embedded-Support-OSX'
+	#category : #'Embedded-Support'
 }
 
 { #category : #accessing }
