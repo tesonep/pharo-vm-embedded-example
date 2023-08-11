@@ -1,18 +1,8 @@
 Class {
 	#name : #EmbeddedSupportOSXGenerator,
-	#superclass : #Object,
-	#instVars : [
-		'properties',
-		'outputDirectory'
-	],
+	#superclass : #EmbeddedSupportGenerator,
 	#category : #'Embedded-Support-OSX'
 }
-
-{ #category : #accessing }
-EmbeddedSupportOSXGenerator >> appName [
-	
-	^ properties at: #AppName
-]
 
 { #category : #copying }
 EmbeddedSupportOSXGenerator >> copyIconSetIn: appDirectory [ 
@@ -37,24 +27,12 @@ EmbeddedSupportOSXGenerator >> copyInstallerBackground [
 	(properties at: #InstallerBackgroundFile) copyTo: dst 
 ]
 
-{ #category : #utils }
+{ #category : #utilities }
 EmbeddedSupportOSXGenerator >> fillWithDefaults [
 	
-	properties at: #AppName ifAbsentPut: 'MyApp'.
-	properties at: #InfoString ifAbsentPut: 'My Test Application'.
-	properties at: #BundleIdentifier ifAbsentPut: 'org.pharo.example'.
-
-	properties at: #ShortVersion ifAbsentPut: '0.0.1'.
-	properties at: #Version ifAbsentPut: (properties at: #ShortVersion).
-	properties at: #DisplayName ifAbsentPut: 'My App'.
-
-	properties at: #ImageFile ifAbsentPut: Smalltalk imageFile.
-	properties at: #ImageName ifAbsentPut: (properties at: #ImageFile) basename.
-	properties at: #ImageDir ifAbsentPut: (properties at: #ImageFile) resolve parent fullName.
-	properties at: #ChangesName ifAbsentPut: ((properties at: #ImageFile) resolve withExtension: 'changes') basename.
-
-	properties at: #CommandLineHandler ifAbsentPut: 'embeddedExample'.
+	super fillWithDefaults.
 	
+	properties at: #BundleIdentifier ifAbsentPut: 'org.pharo.example'.	
 	properties at: #IconSetFile ifAbsentPut: (self templateDirectory / 'icon.icns' ).
 	properties at: #InstallerBackgroundFile ifAbsentPut: (self templateDirectory / 'installer-background.png').
 	
@@ -65,9 +43,7 @@ EmbeddedSupportOSXGenerator >> generate [
 	
 	| appDirectory |
 	
-	self fillWithDefaults.
-
-	outputDirectory ensureCreateDirectory. 
+	super generate.
 
 	"Build App directory"
 	appDirectory := outputDirectory / (self appName , '.app').
@@ -111,22 +87,4 @@ EmbeddedSupportOSXGenerator >> generatePListIn: appDirectory [
 EmbeddedSupportOSXGenerator >> iconSetFile [
 	
 	^ properties at: #IconSetFile 
-]
-
-{ #category : #accessing }
-EmbeddedSupportOSXGenerator >> outputDirectory: aFileReference [ 
-	
-	outputDirectory := aFileReference
-]
-
-{ #category : #accessing }
-EmbeddedSupportOSXGenerator >> properties: aCollection [ 
-	
-	properties := aCollection
-]
-
-{ #category : #accessing }
-EmbeddedSupportOSXGenerator >> templateDirectory [
-	
-	^ (IceRepository repositoryNamed: 'pharo-vm-embedded-example') location / 'templates' / 'Darwin'
 ]
