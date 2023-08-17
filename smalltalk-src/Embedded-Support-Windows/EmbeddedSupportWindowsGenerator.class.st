@@ -67,14 +67,13 @@ EmbeddedSupportWindowsGenerator >> fillWithDefaults [
 { #category : #translating }
 EmbeddedSupportWindowsGenerator >> generate [
 	
-	| appDirectory |
-	
 	super generate.
 
 	self copyIcon.
 	self copyIncludes.
 	self copySources.
-	self generateCMakeScript
+	self generateCMakeScript.
+	self generateInstallerScript
 ]
 
 { #category : #generation }
@@ -83,6 +82,14 @@ EmbeddedSupportWindowsGenerator >> generateCMakeScript [
 	self
 		copyTemplate: self templateDirectory / 'CMakeLists.txt.template'
 		to: outputDirectory / 'CMakeLists.txt'
+]
+
+{ #category : #generation }
+EmbeddedSupportWindowsGenerator >> generateInstallerScript [
+
+	self
+		copyTemplate: self templateDirectory / 'buildWindowsPackage.ps1.template'
+		to: outputDirectory / 'buildWindowsPackage.ps1'
 ]
 
 { #category : #accessing }
