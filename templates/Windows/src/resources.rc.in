@@ -1,0 +1,4 @@
+#include "resources.h"
+
+IDI_PHARO_ICON ICON "@CMAKE_CURRENT_SOURCE_DIR@/icon.ico"
+EMBEDDED_IMAGE RCDATA "@CMAKE_CURRENT_BINARY_DIR@/build/resources/embedded.image"
