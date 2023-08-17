@@ -1,0 +1,35 @@
+Push-Location
+
+Remove-Item -Path $PWD/installer -Force -Recurse
+Remove-Item -Path $PWD/installer-cache -Force -Recurse
+
+$advinst = New-Object -ComObject AdvancedInstaller
+$project = $advinst.CreateProjects("simple")
+$project.ProductDetails.Name = "{AppName}"
+$project.ProductDetails.Publisher= "{CompanyName}"
+$project.ProductDetails.Version= "{Version}"
+$iconLocation = "$PWD\icon.ico"
+$project.ProductDetails.SetIcon($iconLocation)
+$project.InstallParameters.ApplicationFolder = "[LocalAppDataFolder]\[ProductName]"
+
+$project.FilesComponent.AddFolderContents("appdir", "$PWD\build\output")
+$project.FilesComponent.Files
+
+$project.ShortcutsComponent.CreateFileShortcutS("desktopfolder", "appdir\{AppName}.exe")
+$project.ShortcutsComponent.CreateFileShortcutS("programmenufolder", "appdir\{AppName}.exe")
+$project.ShortcutsComponent.CreateFileShortcutS($project.PredefinedFolders.ShortcutFolder.FullPath, "appdir\{AppName}.exe")
+for ($index = 0 ; $index -le 2 ; $index++) \{
+    $shortcut = $project.ShortcutsComponent.Shortcuts[$index]
+    $shortcut.Icon($iconLocation)
+}
+
+$outputFolder = "$PWD\installer";
+$defaultBuild = $project.BuildComponent.Builds[0];
+$defaultBuild.OutputFolder = $outputFolder
+          
+$projectFile = "$PWD\{AppName}-Installer.aip"
+$project.SaveAs($projectFile)
+get-content $projectFile
+$project.Build()
+
+Pop-Location
