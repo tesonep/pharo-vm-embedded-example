@@ -12,6 +12,5 @@ BaselineOfEmbeddedSupport >> baseline: spec [
 		spec 
 			package: 'Embedded-Support';
 			package: 'Embedded-Support-Example';
-			package: 'Embedded-Support-OSX';
-			package: 'Embedded-Support-Windows' ]
+			package: 'Embedded-Support-OSX' ]
 ]

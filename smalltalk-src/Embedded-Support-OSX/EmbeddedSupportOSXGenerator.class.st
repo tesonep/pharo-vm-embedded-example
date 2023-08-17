@@ -59,28 +59,18 @@ EmbeddedSupportOSXGenerator >> generate [
 { #category : #generating }
 EmbeddedSupportOSXGenerator >> generateBuildScript [
 
-	| template generatedContent |
-
-	template := (self templateDirectory / 'build.sh.template') contents.
-	generatedContent := template format: properties.
-
-	outputDirectory / 'build.sh' writeStreamDo: [ :s |
-		s truncate.
-		s nextPutAll: generatedContent ]
+	self
+		copyTemplate: self templateDirectory / 'build.sh.template'
+		to: outputDirectory / 'build.sh'
 ]
 
 { #category : #'as yet unclassified' }
 EmbeddedSupportOSXGenerator >> generatePListIn: appDirectory [
 
-	| template generatedContent |
 	(appDirectory / 'Contents') ensureCreateDirectory.
-
-	template := (self templateDirectory / 'Info.plist.template') contents.
-	generatedContent := template format: properties.
-
-	appDirectory / 'Contents' / 'Info.plist' writeStreamDo: [ :s |
-		s truncate.
-		s nextPutAll: generatedContent ]
+	self
+		copyTemplate: self templateDirectory / 'Info.plist.template'
+		to: appDirectory / 'Contents' / 'Info.plist'
 ]
 
 { #category : #accessing }

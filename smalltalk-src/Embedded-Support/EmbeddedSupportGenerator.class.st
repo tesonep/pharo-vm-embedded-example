@@ -14,6 +14,17 @@ EmbeddedSupportGenerator >> appName [
 	^ properties at: #AppName
 ]
 
+{ #category : #copying }
+EmbeddedSupportGenerator >> copyTemplate: inputTemplate to: outputFile [
+
+	| generatedContent template |
+	template := inputTemplate contents.
+	generatedContent := template format: properties.
+	outputFile writeStreamDo: [ :s |
+		s truncate.
+		s nextPutAll: generatedContent ]
+]
+
 { #category : #utilities }
 EmbeddedSupportGenerator >> fillWithDefaults [
 	

@@ -30,19 +30,23 @@ EmbeddedSupportWindowsGenerator >> copyIncludes [
 { #category : #copying }
 EmbeddedSupportWindowsGenerator >> copySources [
 
-	| srcDir template generatedContent |
+	| srcDir templateSrc |
+
+	templateSrc := self templateDirectory / 'src'.
 	srcDir := outputDirectory / 'src'.
 	srcDir ensureCreateDirectory.
 
-	self copy: self templateDirectory / 'src' / 'embeddedImage.c' to: srcDir / 'embeddedImage.c'.
-	self copy: self templateDirectory / 'src' / 'resources.rc.in' to: srcDir / 'resources.rc.in'.
-	
-	template := (self templateDirectory / 'src' / 'main.c.template') contents.
-	generatedContent := template format: properties.
+	self
+		copy: templateSrc / 'embeddedImage.c'
+		to: srcDir / 'embeddedImage.c'.
 
-	outputDirectory / 'src' / 'main.c' writeStreamDo: [ :s |
-		s truncate.
-		s nextPutAll: generatedContent ]		
+	self
+		copyTemplate: templateSrc / 'resources.rc.in'
+		to: srcDir / 'resources.rc.in'.
+
+	self
+		copyTemplate: templateSrc / 'main.c.template'
+		to: srcDir / 'main.c'
 ]
 
 { #category : #utilities }
@@ -51,7 +55,12 @@ EmbeddedSupportWindowsGenerator >> fillWithDefaults [
 	super fillWithDefaults.
 
 	properties at: #IconFile ifAbsentPut: (self templateDirectory / 'icon.ico' ).
-	properties at: #ImageDirEscaped ifAbsentPut: ((properties at: #ImageDir) copyReplaceAll: '\' with: '\\')
+	properties at: #ImageDirEscaped ifAbsentPut: ((properties at: #ImageDir) copyReplaceAll: '\' with: '\\').
+	
+	properties at: #VersionWindowsFormat ifAbsentPut: ((properties at:#ShortVersion) copyReplaceAll: '.' with: ',').
+	properties at: #CompanyName ifAbsentPut: 'MyCompany'.
+	properties at: #LegalCopyright ifAbsentPut: 'My Company Copyright'.
+	
 	
 ]
 
@@ -71,14 +80,9 @@ EmbeddedSupportWindowsGenerator >> generate [
 { #category : #generation }
 EmbeddedSupportWindowsGenerator >> generateCMakeScript [
 
-	| template generatedContent |
-	
-	template := (self templateDirectory / 'CMakeLists.txt.template') contents.
-	generatedContent := template format: properties.
-
-	outputDirectory / 'CMakeList.txt' writeStreamDo: [ :s |
-		s truncate.
-		s nextPutAll: generatedContent ]		
+	self
+		copyTemplate: self templateDirectory / 'CMakeLists.txt.template'
+		to: outputDirectory / 'CMakeLists.txt'
 ]
 
 { #category : #accessing }
